@@ -1,0 +1,19 @@
+# DJango
+db.sqlite3
+*.sqlite3
+media
+**/__pycache__
+
+# Enviroment variables
+env/
+venv/
+**/.env
+
+# for pycharm
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+.idea/**
+
