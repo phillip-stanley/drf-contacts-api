@@ -14,6 +14,14 @@ class Address(models.Model):
     postcode = models.CharField(validators=[postcode_regex], max_length=255, blank=True)
     county = models.CharField(max_length=255, blank=True)
 
+    def __str__(self):
+        return f"{self.postcode}"
+
+
+class ContactManager(models.Manager):
+    def get_by_natural_key(self, first_name, last_name):
+        return self.get(first_name=first_name, last_name=last_name)
+
 
 # Create your models here.
 class Contact(models.Model):
@@ -27,7 +35,18 @@ class Contact(models.Model):
     middle_name = models.CharField(max_length=100, blank=False)
     mobile_number = models.CharField(validators=[phone_regex], max_length=17, blank=True)
     primary_email = models.CharField(max_length=255, blank=False) 
-    secondary_email = models.CharField(max_length=255, blank=False) 
+    secondary_email = models.CharField(max_length=255, blank=True) 
     addresses = models.ManyToManyField(Address)
 
+    objects = ContactManager()
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["first_name", "last_name"],
+                name="unique_first_last_name",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}" 
