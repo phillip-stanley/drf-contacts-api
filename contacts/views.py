@@ -19,6 +19,7 @@ class ContactsTokenObtainPairView(TokenObtainPairView):
 class UserRegistrationView(APIView):
     def post(self, request):
         serializer = RegistrationSerializer(data=request.data)
+
         if serializer.is_valid():
             serializer.save()
             return Response({

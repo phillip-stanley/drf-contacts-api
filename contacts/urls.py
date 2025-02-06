@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from rest_framework.routers import DefaultRouter
 
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
@@ -26,12 +27,17 @@ from contacts.views import (
     UserRegistrationView,
 )
 
-from contacts.address.views import ContactViewSet
+from contacts.address.views import ContactsViewSet
+
+
+contacts_router = DefaultRouter()
+contacts_router.register(r'api/contacts', ContactsViewSet)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/contacts', ContactViewSet.as_view({'get': 'list'}), name='contacts list'),
     path('api/register/', UserRegistrationView.as_view(), name='user registration'),
     path('api/token/', ContactsTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
+urlpatterns += contacts_router.urls

@@ -8,6 +8,12 @@ class Address(models.Model):
         message="Invalid postcode"
     )
 
+    address_label = models.CharField(
+        max_length=4,
+        choices=(('HOME', 'Home'), ('WORK', 'Work')),
+        blank=False,
+        default='HOME',
+    )
     address_line_one = models.CharField(max_length=255, blank=False)
     address_line_two = models.CharField(max_length=255, blank=True)
     town_or_city = models.CharField(max_length=255, blank=True)
@@ -16,6 +22,12 @@ class Address(models.Model):
 
     def __str__(self):
         return f"{self.postcode}"
+
+    class Meta:
+        models.UniqueConstraint(
+            fields=["postcode", "address_label"],
+            name="unique_postcode_and_label"
+        )
 
 
 class ContactManager(models.Manager):
@@ -32,8 +44,10 @@ class Contact(models.Model):
 
     first_name = models.CharField(max_length=100, blank=False)
     last_name = models.CharField(max_length=100, blank=False)
-    middle_name = models.CharField(max_length=100, blank=False)
-    mobile_number = models.CharField(validators=[phone_regex], max_length=17, blank=True)
+    middle_name = models.CharField(max_length=100, blank=True)
+    #primary_phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True)
+    primary_phone_number = models.CharField(max_length=17, blank=True)
+    secondary_phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True)
     primary_email = models.CharField(max_length=255, blank=False) 
     secondary_email = models.CharField(max_length=255, blank=True) 
     addresses = models.ManyToManyField(Address)

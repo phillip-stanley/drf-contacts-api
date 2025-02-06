@@ -1,15 +1,26 @@
 from rest_framework import viewsets
-from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated 
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.response import Response, Serializer
 
-from .serializers import ContactsSerializer
+from .serializers import ContactsSerializer, ContactsListSerializer
 from .models import Contact
 
-# Create your views here.
-class ContactViewSet(viewsets.ViewSet):
+class ContactsViewSet(viewsets.ModelViewSet):
     """
-    A simple viewset for listing or retrieving contacts.
+    A simple viewset for listing or displaying contacts.
     """
-    def list(self, request):
-        queryset = Contact.objects.all()
-        serializer = ContactsSerializer(queryset, many=True)
-        return Response(serializer.data)
+    serializer_class = ContactsListSerializer
+    queryset = Contact.objects.all()
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_serializer_class(self) -> ContactsSerializer | None:
+        if self.request.query_params.get('includeAddresses', '') == 'true':
+            return ContactsSerializer
+
+        return super().get_serializer_class()
+
+    #def perform_create(self, serializer):
+        #serializer.save(owner=self.request.user)
