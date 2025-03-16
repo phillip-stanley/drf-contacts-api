@@ -1,13 +1,17 @@
 from django.db import models
 from django.core.validators import RegexValidator
 
+from django.contrib.auth.models import User
+from contacts.address.validators.validators import (
+    phone_regex,
+)
+
 
 class Address(models.Model):
     postcode_regex = RegexValidator(
         regex=f'([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9][A-Za-z]?))))\s?[0-9][A-Za-z]{2})',
         message="Invalid postcode"
     )
-
     address_label = models.CharField(
         max_length=4,
         choices=(('HOME', 'Home'), ('WORK', 'Work')),
@@ -19,6 +23,9 @@ class Address(models.Model):
     town_or_city = models.CharField(max_length=255, blank=True)
     postcode = models.CharField(validators=[postcode_regex], max_length=255, blank=True)
     county = models.CharField(max_length=255, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True, auto_now=False)
+    updated_at = models.DateTimeField(auto_now=True, auto_now_add=False)
 
     def __str__(self):
         return f"{self.postcode}"
@@ -35,13 +42,11 @@ class ContactManager(models.Manager):
         return self.get(first_name=first_name, last_name=last_name)
 
 
-# Create your models here.
-class Contact(models.Model):
-    phone_regex = RegexValidator(
-        regex=f'^\+?1?\d{9,15}$',
-        message="Invalid phone number"
-    )
+def get_default_user():
+    return User.objects.get_or_create(username='admin')[0].id
 
+
+class Contact(models.Model):
     first_name = models.CharField(max_length=100, blank=False)
     last_name = models.CharField(max_length=100, blank=False)
     middle_name = models.CharField(max_length=100, blank=True)
@@ -50,7 +55,13 @@ class Contact(models.Model):
     secondary_phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True)
     primary_email = models.CharField(max_length=255, blank=False) 
     secondary_email = models.CharField(max_length=255, blank=True) 
+
     addresses = models.ManyToManyField(Address)
+
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, default=get_default_user)
+
+    created_at = models.DateTimeField(auto_now_add=True, auto_now=False,)
+    updated_at = models.DateTimeField(auto_now=True, auto_now_add=False)
 
     objects = ContactManager()
 

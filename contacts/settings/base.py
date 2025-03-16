@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+from datetime import timedelta
 import environ
 from pathlib import Path
 
@@ -53,6 +54,7 @@ SIMPLE_JWT = {
     'TOKEN_OBTAIN_SERIALIZER': 'contacts.serializers.serializers.MyTokenObtainPairSerializer',
     #'BLACKLIST_AFTER_ROTATION': True,
     'UPDATE_LAST_LOGIN': True,
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=2),
 }
 
 MIDDLEWARE = [
