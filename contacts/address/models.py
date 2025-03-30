@@ -1,17 +1,14 @@
 from django.db import models
-from django.core.validators import RegexValidator
 
 from django.contrib.auth.models import User
 from contacts.address.validators.validators import (
-    phone_regex,
+    validate_uk_mobile,
+    validate_uk_landline,
+    validate_uk_postcode,
 )
 
 
 class Address(models.Model):
-    postcode_regex = RegexValidator(
-        regex=f'([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9][A-Za-z]?))))\s?[0-9][A-Za-z]{2})',
-        message="Invalid postcode"
-    )
     address_label = models.CharField(
         max_length=4,
         choices=(('HOME', 'Home'), ('WORK', 'Work')),
@@ -21,7 +18,11 @@ class Address(models.Model):
     address_line_one = models.CharField(max_length=255, blank=False)
     address_line_two = models.CharField(max_length=255, blank=True)
     town_or_city = models.CharField(max_length=255, blank=True)
-    postcode = models.CharField(validators=[postcode_regex], max_length=255, blank=True)
+    postcode = models.CharField(
+        validators=[validate_uk_postcode],
+        max_length=255,
+        blank=True,
+    )
     county = models.CharField(max_length=255, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True, auto_now=False)
@@ -50,9 +51,16 @@ class Contact(models.Model):
     first_name = models.CharField(max_length=100, blank=False)
     last_name = models.CharField(max_length=100, blank=False)
     middle_name = models.CharField(max_length=100, blank=True)
-    #primary_phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True)
-    primary_phone_number = models.CharField(max_length=17, blank=True)
-    secondary_phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True)
+    primary_phone_number = models.CharField(
+        validators=[validate_uk_landline, validate_uk_mobile],
+        max_length=17,
+        blank=True,
+    )
+    secondary_phone_number = models.CharField(
+        validators=[validate_uk_landline, validate_uk_mobile],
+        max_length=17,
+        blank=True,
+    )
     primary_email = models.CharField(max_length=255, blank=False) 
     secondary_email = models.CharField(max_length=255, blank=True) 
 
