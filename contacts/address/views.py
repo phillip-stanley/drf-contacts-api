@@ -18,11 +18,18 @@ class ContactsViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get_serializer_class(self) -> Type[Serializer]:
-        if self.request.query_params.get('includeAddresses', '') == 'true' or self.action == 'create':
-                return ContactsSerializer
+    serializer_map = {
+        'list': ContactsListSerializer,
+        'create': ContactsSerializer,
+        'update': ContactsSerializer,
+        'partial_update': ContactsSerializer,
+    }
 
-        return super().get_serializer_class()
+    def get_serializer_class(self) -> Type[Serializer]:
+        if self.request.query_params.get('includeAddresses', '') == 'true':
+            return ContactsSerializer
+
+        return self.serializer_map.get(self.action, self.serializer_class)
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
