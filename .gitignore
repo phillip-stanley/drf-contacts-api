@@ -1,6 +1,7 @@
 # DJango
 db.sqlite3
 *.sqlite3
+*.sqlite3.backup
 media
 .coverage
 **/__pycache__
@@ -18,3 +19,6 @@ venv/
 .idea/**/shelf
 .idea/**
 
+# for nvim
+scratch*.md
+requests/*
