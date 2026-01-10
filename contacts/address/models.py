@@ -1,9 +1,9 @@
+from django.contrib.auth.models import User
 from django.db import models
 
-from django.contrib.auth.models import User
 from contacts.address.validators.validators import (
-    validate_uk_mobile,
     validate_uk_landline,
+    validate_uk_mobile,
     validate_uk_postcode,
 )
 
@@ -11,9 +11,9 @@ from contacts.address.validators.validators import (
 class Address(models.Model):
     address_label = models.CharField(
         max_length=4,
-        choices=(('HOME', 'Home'), ('WORK', 'Work')),
+        choices=(("HOME", "Home"), ("WORK", "Work")),
         blank=False,
-        default='HOME',
+        default="HOME",
     )
     address_line_one = models.CharField(max_length=255, blank=False)
     address_line_two = models.CharField(max_length=255, blank=True)
@@ -28,23 +28,15 @@ class Address(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, auto_now=False)
     updated_at = models.DateTimeField(auto_now=True, auto_now_add=False)
 
-    def __str__(self):
-        return f"{self.postcode}"
-
     class Meta:
         models.UniqueConstraint(
-            fields=["postcode", "address_label"],
-            name="unique_postcode_and_label"
+            fields=["postcode", "address_label"], name="unique_postcode_and_label"
         )
 
 
 class ContactManager(models.Manager):
     def get_by_natural_key(self, first_name, last_name):
         return self.get(first_name=first_name, last_name=last_name)
-
-
-def get_default_user():
-    return User.objects.get_or_create(username='admin')[0].id
 
 
 class Contact(models.Model):
@@ -61,14 +53,17 @@ class Contact(models.Model):
         max_length=17,
         blank=True,
     )
-    primary_email = models.CharField(max_length=255, blank=False) 
-    secondary_email = models.CharField(max_length=255, blank=True) 
+    primary_email = models.CharField(max_length=255, blank=False)
+    secondary_email = models.CharField(max_length=255, blank=True)
 
     addresses = models.ManyToManyField(Address)
 
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, default=get_default_user)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    created_at = models.DateTimeField(auto_now_add=True, auto_now=False,)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        auto_now=False,
+    )
     updated_at = models.DateTimeField(auto_now=True, auto_now_add=False)
 
     objects = ContactManager()
@@ -82,4 +77,4 @@ class Contact(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}" 
+        return f"{self.first_name} {self.last_name}"

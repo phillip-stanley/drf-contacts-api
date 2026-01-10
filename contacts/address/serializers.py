@@ -1,13 +1,9 @@
 from rest_framework import serializers
+from rest_framework.utils import serializer_helpers
 
 from django.contrib.auth.models import User
 
 from .models import Contact, Address
-from .validators.validators import (
-    validate_uk_postcode,
-    validate_uk_mobile,
-    validate_uk_landline,
-)
 
 
 class AddressSerializer(serializers.ModelSerializer):
@@ -15,17 +11,13 @@ class AddressSerializer(serializers.ModelSerializer):
     A simple serializer for the `Address` model.
     """
     address_label= serializers.ChoiceField(
-      choices=(('HOME', 'home'), ('WORK', 'work')),
+        choices=(('HOME', 'home'), ('WORK', 'work')),
         allow_blank=False,
     )
     address_line_one = serializers.CharField(max_length=255, allow_blank=False)
     address_line_two = serializers.CharField(max_length=255, allow_blank=True, required=False)
     town_or_city = serializers.CharField(max_length=255, allow_blank=True)
-    postcode = serializers.CharField(
-        validators=[validate_uk_postcode],
-        max_length=255,
-        allow_blank=True,
-    )
+    postcode = serializers.CharField(max_length=255, allow_blank=True)
     county = serializers.CharField(max_length=255, allow_blank=True, required=False)
 
     class Meta:
@@ -61,23 +53,14 @@ class ContactsListSerializer(serializers.ModelSerializer):
 
 class ContactsSerializer(serializers.ModelSerializer):
     """
-    A simple serializer for `Contact` model listing including `ManyToMany`
-    relation with `Addresses`.
+    A simple serializer for `Contact` model listing including
+    `ManyToMany` relation with `Addresses`.
     """
     first_name = serializers.CharField(max_length=100, allow_blank=False)
     last_name = serializers.CharField(max_length=100, allow_blank=False)
     middle_name = serializers.CharField(max_length=100, allow_blank=True, required=False)
-    primary_phone_number = serializers.CharField(
-        validators=[validate_uk_mobile, validate_uk_landline],
-        max_length=17,
-        allow_blank=False,
-    )
-    secondary_phone_number = serializers.CharField(
-        validators=[validate_uk_mobile, validate_uk_landline],
-        max_length=17,
-        allow_blank=True,
-        required=False,
-    )
+    primary_phone_number = serializers.CharField(max_length=17, allow_blank=False)
+    secondary_phone_number = serializers.CharField(max_length=17, allow_blank=True, required=False)
     primary_email = serializers.CharField(max_length=255, allow_blank=False)
     secondary_email = serializers.CharField(max_length=255, allow_blank=True, required=False)
 
@@ -99,10 +82,6 @@ class ContactsSerializer(serializers.ModelSerializer):
         contact = Contact.objects.create(**validated_data)
         for address in addresses:
             address = Address.objects.create(contact=contact, **address)
-            contact.addresses.add(address)
+            contact.add(address)
         return contact
-
-    def update(self, instance, validated_data):
-        breakpoint()
-        return instance
 

@@ -31,7 +31,7 @@ from contacts.address.views import ContactsViewSet
 
 
 contacts_router = DefaultRouter()
-contacts_router.register(r'api/contacts', ContactsViewSet)
+contacts_router.register(r'api/contacts', ContactsViewSet, basename='contacts')
 
 
 urlpatterns = [
