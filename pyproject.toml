@@ -1,0 +1,9 @@
+[tool.pyright]
+include = ["contacts"]
+exclude = ["**/migrations", "**/__pycache__", "venv", "env", "tests"]
+pythonVersion = "3.13.11"
+typeCheckingMode = "basic"
+
+# Django-specific settings
+reportMissingTypeStubs = false
+reportOptionalMemberAccess = false

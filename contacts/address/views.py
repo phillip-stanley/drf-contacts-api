@@ -27,7 +27,10 @@ class ContactsViewSet(viewsets.ModelViewSet):
         "partial_update": ContactsSerializer,
     }
 
-    def get_serializer_class(self) -> Type[Serializer]:
+    def get_serializer_class(
+        self,
+    ) -> type[ContactsListSerializer] | type[ContactsSerializer]:
+        """Returns the correct serializer based on the present of query_params"""
         if self.request.query_params.get("includeAddresses", "") == "true":
             return ContactsSerializer
 
