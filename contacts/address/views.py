@@ -1,8 +1,5 @@
-from typing import Never, Type
-
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Serializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .models import Contact
@@ -30,7 +27,14 @@ class ContactsViewSet(viewsets.ModelViewSet):
     def get_serializer_class(
         self,
     ) -> type[ContactsListSerializer] | type[ContactsSerializer]:
-        """Returns the correct serializer based on the present of query_params"""
+        """Returns the correct serializer based on the present of query_params
+
+        Args:
+            None
+
+        Returns:
+            ContactsSerializer OR ContactsListSerializer
+        """
         if self.request.query_params.get("includeAddresses", "") == "true":
             return ContactsSerializer
 
