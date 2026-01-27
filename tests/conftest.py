@@ -1,8 +1,10 @@
 import pytest
 from django.contrib.auth.models import User
-from rest_framework.test import APIClient, APIRequestFactory
 from pytest_factoryboy import register
+from rest_framework.test import APIClient
+
 from tests.factories import ContactFactory
+
 
 @pytest.fixture
 def test_user():
@@ -12,9 +14,11 @@ def test_user():
         email="testuser@admin.com",
     )
 
+
 @pytest.fixture
 def api_client():
     return APIClient()
+
 
 register(ContactFactory)
 

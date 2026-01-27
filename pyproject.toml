@@ -4,6 +4,16 @@ exclude = ["**/migrations", "**/__pycache__", "venv", "env", "tests"]
 pythonVersion = "3.13.11"
 typeCheckingMode = "basic"
 
+[tool.coverage.run]
+omit = [
+    "**/migrations/**",
+    "**/settings/**",
+    "**/asgi.py",
+    "**/wsgi.py",
+    "**/app.py",
+    "**/__init__.py",
+]
+
 # Django-specific settings
 reportMissingTypeStubs = false
 reportOptionalMemberAccess = false
