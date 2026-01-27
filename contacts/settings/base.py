@@ -54,9 +54,11 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     "TOKEN_OBTAIN_SERIALIZER": "contacts.serializers.serializers.MyTokenObtainPairSerializer",
-    #'BLACKLIST_AFTER_ROTATION': True,
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACK_LIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": True,
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),
 }
 
 MIDDLEWARE = [
