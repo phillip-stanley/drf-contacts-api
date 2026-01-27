@@ -14,30 +14,24 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path
 from rest_framework.routers import DefaultRouter
-
-from rest_framework_simplejwt.views import (
-    TokenRefreshView,
-)
-
-from contacts.views import (
-    ContactsTokenObtainPairView,
-    UserRegistrationView,
-)
+from rest_framework_simplejwt.views import TokenBlacklistView, TokenRefreshView
 
 from contacts.address.views import ContactsViewSet
-
+from contacts.views import ContactsTokenObtainPairView, UserRegistrationView
 
 contacts_router = DefaultRouter()
-contacts_router.register(r'api/contacts', ContactsViewSet, basename='contacts')
+contacts_router.register(r"api/contacts", ContactsViewSet, basename="contacts")
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/register/', UserRegistrationView.as_view(), name='user registration'),
-    path('api/token/', ContactsTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path("admin/", admin.site.urls),
+    path("api/register/", UserRegistrationView.as_view(), name="user registration"),
+    path("api/token/", ContactsTokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("api/token/logout/", TokenBlacklistView.as_view(), name="token_blacklist"),
 ]
 urlpatterns += contacts_router.urls
