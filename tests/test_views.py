@@ -112,3 +112,30 @@ class TestContactViewSet:
         assert response.data["first_name"] == new_contact.first_name
         assert response.data["last_name"] == new_contact.last_name
         assert response.data["primary_email"] == new_contact.primary_email
+
+    @pytest.mark.django_db
+    def test_api_rejects_duplicate_contact_names(self, api_client, test_user):
+        """
+        Given an authenticated user with at least one contact
+        When they try to create a second contact with the same first & last name
+        Then the repsonse is a 400 due to a first & last name unique constraint
+        """
+        # Given
+        api_client.force_authenticate(user=test_user)
+        url = reverse("contacts-list")
+
+        contact_data = {
+            "first_name": "John",
+            "last_name": "Doe",
+            "primary_email": "john1@example.com",
+            "primary_phone_number": "07700900123",
+            "addresses": [],
+        }
+        api_client.post(url, contact_data, format="json")
+
+        # When
+        contact_data["primary-email"] = "john2@example.com"
+        response = api_client.post(url, contact_data, format="json")
+
+        # Then
+        assert response.status_code == 400
