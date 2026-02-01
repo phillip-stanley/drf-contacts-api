@@ -1,7 +1,7 @@
 from factory import Faker
 from factory.django import DjangoModelFactory
 
-from contacts.address.models import Address, Contact, User
+from contacts.address.models import Contact
 
 
 class ContactFactory(DjangoModelFactory):
@@ -12,4 +12,3 @@ class ContactFactory(DjangoModelFactory):
     last_name = Faker("last_name")
     primary_phone_number = Faker("phone_number")
     primary_email = Faker("email")
-

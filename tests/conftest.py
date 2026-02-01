@@ -12,6 +12,7 @@ def test_user():
     return User.objects.create_user(
         username="testuser",
         email="testuser@admin.com",
+        password="testpass123",
     )
 
 
