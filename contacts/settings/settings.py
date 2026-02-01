@@ -31,6 +31,9 @@ DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = []
 
+# JWT configuration
+ACCESS_TOKEN_LIFETIME_MINUTES = env.int("ACCESS_TOKEN_LIFETIME_MINUTES")
+REFRESH_TOKEN_LIFETIME_DAYS = env.int("REFRESH_TOKEN_LIFETIME_DAYS")
 
 # Application definition
 
@@ -54,8 +57,8 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     "TOKEN_OBTAIN_SERIALIZER": "contacts.serializers.serializers.MyTokenObtainPairSerializer",
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=ACCESS_TOKEN_LIFETIME_MINUTES),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=REFRESH_TOKEN_LIFETIME_DAYS),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACK_LIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": True,
