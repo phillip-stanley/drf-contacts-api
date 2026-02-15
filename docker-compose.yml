@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  contacts_api:
+    container_name: contacts_api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    depends_on:
+      - contacts_db
+    networks:
+      - contacts_db_network
+
+  contacts_db:
+    container_name: contacts_db
+    image: postgres:14
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - contacts_db_network
+
+  contacts_db_client:
+    container_name: contacts_pg_admin
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    depends_on:
+      - contacts_db
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - '5050:80'
+    volumes:
+      - contacts_db_client_data:/var/lib/pgadmin
+    networks:
+      - contacts_db_network
+
+networks:
+  contacts_db_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  contacts_db_client_data:
+    driver: local
